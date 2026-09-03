@@ -73,10 +73,6 @@ export default function LoginForm() {
       <button type="submit" className="btn-primary w-full" disabled={loading}>
         {loading ? "Connexion…" : "Se connecter"}
       </button>
-
-      <p className="rounded-lg bg-stone-50 px-3 py-2 text-center text-xs text-stone-500">
-        Démo : <strong>admin@oximmo.fr</strong> / <strong>Admin123!</strong>
-      </p>
     </form>
   );
 }

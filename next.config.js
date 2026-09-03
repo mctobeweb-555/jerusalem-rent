@@ -11,7 +11,14 @@ const scriptSrc = isDev
 // En-têtes de sécurité appliqués à toutes les routes.
 // CSP volontairement permissive sur 'unsafe-inline' pour les styles (Tailwind runtime,
 // next/image) ; à durcir avec un nonce si besoin en production.
+// Indexation coupée tant que le site n'est pas prêt à être découvert par les
+// moteurs de recherche (déploiement de test sur .vercel.app, contenu/domaine
+// pas encore finalisés). À réactiver en passant ALLOW_INDEXING=true dans les
+// variables d'environnement Vercel puis en redéployant.
+const allowIndexing = process.env.ALLOW_INDEXING === "true";
+
 const securityHeaders = [
+  ...(allowIndexing ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

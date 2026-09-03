@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/guards";
+import AgentRowActions from "@/components/admin/AgentRowActions";
 
 export const dynamic = "force-dynamic";
 
@@ -74,23 +75,13 @@ export default async function AdminAgentsPage() {
                   </td>
                   <td className="px-5 py-3 text-stone-600">{a._count.properties}</td>
                   <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1.5">
-                      {a.slug && (
-                        <Link
-                          href={`/agents/${a.slug}`}
-                          target="_blank"
-                          className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-stone-500 hover:bg-stone-100"
-                        >
-                          Voir
-                        </Link>
-                      )}
-                      <Link
-                        href={`/admin/agents/${a.id}`}
-                        className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50"
-                      >
-                        Éditer
-                      </Link>
-                    </div>
+                    <AgentRowActions
+                      id={a.id}
+                      name={a.name}
+                      slug={a.slug}
+                      propertyCount={a._count.properties}
+                      isSelf={a.id === user.id}
+                    />
                   </td>
                 </tr>
               ))}

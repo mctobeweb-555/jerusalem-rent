@@ -33,6 +33,8 @@ const heebo = Heebo({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+// Cf. next.config.js::allowIndexing — même interrupteur, à activer ensemble.
+const allowIndexing = process.env.ALLOW_INDEXING === "true";
 
 const OG_LOCALES: Record<Locale, string> = { fr: "fr_FR", en: "en_US", he: "he_IL" };
 
@@ -59,7 +61,9 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Jerusalem Rent",
       url: siteUrl,
     },
-    robots: { index: true, follow: true },
+    robots: allowIndexing
+      ? { index: true, follow: true }
+      : { index: false, follow: false },
   };
 }
 
