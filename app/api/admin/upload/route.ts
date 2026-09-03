@@ -109,9 +109,9 @@ export async function POST(req: Request) {
         contentType: file.type,
       });
       return NextResponse.json({ url: blob.url }, { status: 201 });
-    } catch {
+    } catch (e) {
       return NextResponse.json(
-        { error: "Échec de l'enregistrement du fichier." },
+        { error: "Échec de l'enregistrement du fichier.", debug: e instanceof Error ? e.message : String(e) },
         { status: 500 },
       );
     }
@@ -121,9 +121,9 @@ export async function POST(req: Request) {
   try {
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, name), bytes);
-  } catch {
+  } catch (e) {
     return NextResponse.json(
-      { error: "Échec de l'enregistrement du fichier." },
+      { error: "Échec de l'enregistrement du fichier.", debug: `no BLOB_READ_WRITE_TOKEN, fs fallback failed: ${e instanceof Error ? e.message : String(e)}` },
       { status: 500 },
     );
   }
