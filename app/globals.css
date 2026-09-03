@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Police de titrage par défaut (latin) ; redéfinie ci-dessous pour
+       l'hébreu (Bodoni Moda n'a pas de glyphes hébreux — voir app/layout.tsx). */
+    --font-display: var(--font-display-latin);
+  }
+  html[dir="rtl"] {
+    --font-display: var(--font-display-he);
+  }
+  body {
+    @apply bg-stone-50 text-stone-800 antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-light tracking-wide text-stone-900;
+  }
+}
+
+@layer components {
+  .input {
+    @apply min-h-11 w-full rounded-xl border border-stone-200 bg-white px-3.5 py-2.5 text-sm text-stone-900 shadow-sm outline-none transition
+      placeholder:text-stone-400
+      focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-stone-700;
+  }
+
+  /* Pas d'arrondi sur les boutons — code visuel du luxe (cf. Ritz-Carlton/
+     Four Seasons/Relais & Châteaux), tranche avec le reste de l'UI (cartes,
+     inputs) qui garde ses coins arrondis. */
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-none border border-transparent px-4 py-2.5 text-sm font-semibold transition
+      focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white shadow-sm hover:bg-primary-700 focus:ring-primary-500/30 active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply btn border border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50 focus:ring-stone-300/40 active:scale-[0.98];
+  }
+
+  .btn-accent {
+    @apply btn bg-accent-500 text-white shadow-sm hover:bg-accent-600 focus:ring-accent-500/30 active:scale-[0.98];
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .card {
+    @apply rounded-2xl border border-stone-200/70 bg-white shadow-card;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Marqueur de prix sur la carte Leaflet (HTML injecté à l'exécution via divIcon,
+   donc hors du scan Tailwind → styles écrits explicitement). */
+.oximmo-pill {
+  display: inline-block;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  border-radius: 9999px;
+  background-color: #1c1f40;
+  padding: 4px 10px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+.oximmo-pill:hover {
+  background-color: #101224;
+}
+/* Variante icône (prix masqué) : pastille ronde de taille fixe au lieu de
+   l'auto-largeur pensée pour du texte. */
+.oximmo-pill.oximmo-pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
+/* Neutralise le fond blanc par défaut des icônes Leaflet. */
+.oximmo-price-marker {
+  background: transparent;
+  border: 0;
+}
+/* Pastille de regroupement (leaflet.markercluster) — plusieurs biens au même
+   endroit/proches affichent un nombre au lieu de pastilles superposées
+   illisibles. Même esprit que .oximmo-pill (navy, liseré blanc, ombre). */
+.oximmo-cluster-wrapper {
+  background: transparent;
+  border: 0;
+}
+.oximmo-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background-color: #1c1f40;
+  color: #fff;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
+/* Coins arrondis cohérents pour la bulle Leaflet. */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -12px rgb(16 18 36 / 0.25);
+}
+
+/* Fond de carte désaturé/éclairci — les tuiles OpenStreetMap gratuites sans
+   clé sont trop colorées/chargées pour l'esprit du site ; un filtre CSS sur
+   les tuiles donne un rendu gris/sobre proche d'un fond de carte "premium",
+   sans dépendre d'un fournisseur tiers (CartoDB exige désormais une clé API
+   sur son offre gratuite — tuiles "API KEY REQUIRED" en filigrane sans elle). */
+.oximmo-map-muted .leaflet-tile-pane {
+  filter: grayscale(55%) brightness(1.12) contrast(0.92) saturate(0.7);
+}
+
+/* Contrôles de zoom Leaflet : le style par défaut (boutons carrés bleutés,
+   ombre dure) jure avec le reste du site — repris en fin, sobre, marine. */
+.leaflet-control-zoom {
+  border: 1px solid #e5e3df !important;
+  border-radius: 0 !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08) !important;
+  overflow: hidden;
+}
+.leaflet-control-zoom a {
+  color: #1c1f40 !important;
+  background-color: #fff !important;
+  border-radius: 0 !important;
+}
+.leaflet-control-zoom a:hover {
+  background-color: #f2f1ef !important;
+}
+.leaflet-control-attribution {
+  border-radius: 0 !important;
+  font-size: 10px !important;
+}
+
+/* Marqueur de localisation (fiche annonce). */
+.oximmo-loc-marker {
+  background: transparent;
+  border: 0;
+}
+.oximmo-loc-pin {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: #1c1f40;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
+}
+
+/* --- Diaporama hero (effet Ken Burns, 100% CSS — pas de JS) ---
+   3 visuels, 7 s chacun (21 s de boucle). Chaque slide reçoit le même délai
+   négatif sur ses deux animations (fondu + zoom) pour rester synchronisé :
+   il apparaît à l'échelle 1, zoome doucement jusqu'à disparaître. */
+@keyframes kb-fade {
+  0% { opacity: 0; }
+  3% { opacity: 1; }
+  30% { opacity: 1; }
+  36% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes kb-zoom {
+  0% { transform: scale(1); }
+  36% { transform: scale(1.12); }
+  100% { transform: scale(1.12); }
+}
+.kb-fade {
+  opacity: 0;
+  animation: kb-fade 21s ease-in-out infinite;
+}
+.kb-zoom {
+  animation: kb-zoom 21s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kb-fade,
+  .kb-zoom {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Bande photo à défilement horizontal (galerie « Qui sommes-nous ») : la
+   barre de défilement est masquée, le geste tactile/trackpad et les flèches
+   suffisent à parcourir la bande. */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Calendrier natif (input type="date") ---
+   Contrôle du navigateur, stylable seulement en surface : on force le thème
+   clair (au cas où le mode sombre système s'en mêle) et la couleur d'accent
+   du calendrier (sélection/aujourd'hui) sur le marine de la marque. */
+input[type="date"] {
+  color-scheme: light;
+  accent-color: #1c1f40;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* --- Impression / export PDF (fiche annonce) --- */
+@media print {
+  /* Masque la navigation et les éléments interactifs. */
+  header,
+  footer,
+  .no-print,
+  .leaflet-container {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  main {
+    margin: 0 !important;
+  }
+  /* Une seule colonne, pas d'ombres, évite les coupures. */
+  .print-single-col {
+    display: block !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e7e5e4 !important;
+    break-inside: avoid;
+  }
+  a[href]::after {
+    content: "";
+  }
+}

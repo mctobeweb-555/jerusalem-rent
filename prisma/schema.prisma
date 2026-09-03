@@ -1,0 +1,230 @@
+// Jerusalem Rent (base OxImmo) — schéma de données
+// Prix stockés en CENTIMES (Int) : jamais de flottant monétaire.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agency {
+  id         String     @id @default(cuid())
+  name       String
+  users      User[]
+  properties Property[]
+  createdAt  DateTime   @default(now())
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(AGENT)
+  // Profil public affiché sur les biens dont l'utilisateur est l'agent.
+  slug         String?    @unique
+  phone        String?
+  title        String?
+  avatarUrl    String?
+  // Un agent avec canManageAll voit/édite toutes les annonces de l'agence.
+  canManageAll Boolean    @default(false)
+  // Langues parlées (tableau de chaînes), affichées sur le profil public.
+  languages    Json?
+  agencyId     String
+  agency       Agency     @relation(fields: [agencyId], references: [id])
+  properties   Property[]
+  createdAt    DateTime   @default(now())
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+model Property {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  reference   String         @unique
+  title       String
+  description String         @db.Text
+  type        PropertyType
+  status      ListingStatus
+  price       Int // centimes !
+  surface     Float
+  rooms       Int?
+  bedrooms    Int?
+  bathrooms   Int?
+  floor       Int?
+  maxGuests   Int? // capacité d'hébergement (court terme)
+  address     String
+  city        String
+  // Quartier éditorial (cf. lib/neighborhoods.ts) — nom affiché tel quel
+  // (ex. "Nahalat Shiva"), null si non renseigné. Sert le filtre dédié sur
+  // /annonces, plus fiable que le matching texte libre sur le titre/la
+  // description utilisé auparavant.
+  neighborhood String?
+  postalCode  String
+  lat         Float?
+  lng         Float?
+  features    Json
+  // Prix masqué côté public ("Prix sur demande"). L'admin voit toujours le prix.
+  priceHidden Boolean        @default(false)
+  images      Image[]
+  views       Int            @default(0) // total dénormalisé (affichage rapide)
+  viewEvents  PropertyView[]
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  leads       Lead[]
+
+  // Propriétaire (agent) — permet le scoping AGENT à ses propres annonces.
+  ownerId String?
+  owner   User?   @relation(fields: [ownerId], references: [id])
+
+  agencyId String
+  agency   Agency @relation(fields: [agencyId], references: [id])
+
+  reviews Review[]
+  translations PropertyTranslation[]
+
+  @@index([city, postalCode])
+  @@index([status, price])
+  @@index([type, surface])
+  @@index([ownerId])
+  @@index([neighborhood])
+  @@index([agencyId])
+  @@index([published, createdAt])
+}
+
+// Traduction du titre/description d'une annonce (langue autre que le
+// français, qui reste stocké directement sur Property). Saisie dans
+// l'admin ; repli sur le FR côté public si absente pour une langue.
+model PropertyTranslation {
+  id          String   @id @default(cuid())
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  locale      String // "en" | "he"
+  title       String
+  description String   @db.Text
+  // Équipements traduits (ex. "Wifi","Equipped kitchen"...) — optionnel,
+  // repli sur Property.features (FR) si absent/vide pour cette langue.
+  features    Json?
+  updatedAt   DateTime @updatedAt @default(now())
+
+  @@unique([propertyId, locale])
+}
+
+// Avis client — saisis par l'agence (admin), pas de dépôt public.
+// propertyId null = avis général (témoignage non lié à une annonce précise).
+model Review {
+  id         String   @id @default(cuid())
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  authorName String
+  rating     Int // 1 à 5
+  comment    String   @db.Text
+  avatarUrl  String?
+  published  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId])
+  @@index([published, createdAt])
+}
+
+// Événement de vue d'une fiche (horodaté) → stats sur période.
+model PropertyView {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId, createdAt])
+  @@index([createdAt])
+}
+
+model Image {
+  id         String   @id @default(cuid())
+  url        String
+  alt        String
+  order      Int      @default(0)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id         String     @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  message    String     @db.Text
+  propertyId String?
+  property   Property?  @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  status     LeadStatus @default(NEW)
+  // Demande de réservation (mode court terme) — optionnel.
+  checkIn    DateTime?
+  checkOut   DateTime?
+  guests     Int? // total (adultes + enfants)
+  adults     Int?
+  children   Int?
+  babies     Int?
+  createdAt  DateTime   @default(now())
+
+  @@index([status, createdAt])
+}
+
+// Paramètres du site (singleton, id fixe "default"). Choisit les catégories
+// affichées : vente / location / court terme.
+model SiteSettings {
+  id              String   @id @default("default")
+  showSale        Boolean  @default(true)
+  showRent        Boolean  @default(true)
+  showShortTerm   Boolean  @default(false)
+  // Bouton flottant WhatsApp : vide = désactivé.
+  whatsappNumber  String?
+  whatsappMessage String?
+  // Avis "généralisés" (témoignages non liés à une annonce) affichés sur la
+  // home en mode vente/location. Sans effet en mode court-terme-only (la
+  // home y affiche toujours les avis liés à une annonce).
+  reviewsGeneralized Boolean @default(false)
+  // Liens réseaux sociaux affichés dans le footer. Vide = icône masquée.
+  facebookUrl  String?
+  instagramUrl String?
+  linkedinUrl  String?
+  updatedAt       DateTime @updatedAt @default(now())
+}
+
+model NewsletterSubscriber {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  active       Boolean   @default(true)
+  unsubToken   String    @unique @default(cuid()) // lien de désinscription stable
+  unsubscribedAt DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([createdAt])
+}
+
+enum PropertyType {
+  HOUSE
+  APARTMENT
+  LAND
+  COMMERCIAL
+}
+
+enum ListingStatus {
+  FOR_SALE
+  FOR_RENT
+  SHORT_TERM
+  SOLD
+  RENTED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CLOSED
+}
