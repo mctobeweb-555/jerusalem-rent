@@ -34,7 +34,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "img-src 'self' https://picsum.photos https://fastly.picsum.photos https://*.tile.openstreetmap.org data: blob:",
+      "img-src 'self' https://picsum.photos https://fastly.picsum.photos https://*.tile.openstreetmap.org https://*.public.blob.vercel-storage.com data: blob:",
       scriptSrc,
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
@@ -55,6 +55,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "picsum.photos" },
       { protocol: "https", hostname: "fastly.picsum.photos" },
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
   },
   async headers() {
