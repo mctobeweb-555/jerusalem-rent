@@ -100,18 +100,20 @@ export async function POST(req: Request) {
   // Vercel : le système de fichiers est en lecture seule en production, donc
   // écrire dans public/uploads n'y fonctionne pas et ne persisterait pas
   // entre déploiements de toute façon. Bascule sur Vercel Blob dès que le
-  // store est rattaché au projet (token auto-injecté) ; en local (dev, pas
-  // de token), on garde l'écriture disque telle quelle.
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  // store est rattaché au projet — auth via OIDC (VERCEL_OIDC_TOKEN, injecté
+  // automatiquement), BLOB_STORE_ID identifie le store, aucun token manuel
+  // à gérer (@vercel/blob >= 2.x). En local (dev, pas de store rattaché), on
+  // garde l'écriture disque telle quelle.
+  if (process.env.BLOB_STORE_ID) {
     try {
       const blob = await put(`uploads/${name}`, bytes, {
         access: "public",
         contentType: file.type,
       });
       return NextResponse.json({ url: blob.url }, { status: 201 });
-    } catch (e) {
+    } catch {
       return NextResponse.json(
-        { error: "Échec de l'enregistrement du fichier.", debug: e instanceof Error ? e.message : String(e) },
+        { error: "Échec de l'enregistrement du fichier." },
         { status: 500 },
       );
     }
@@ -121,9 +123,9 @@ export async function POST(req: Request) {
   try {
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, name), bytes);
-  } catch (e) {
+  } catch {
     return NextResponse.json(
-      { error: "Échec de l'enregistrement du fichier.", debug: `no BLOB_READ_WRITE_TOKEN, fs fallback failed: ${e instanceof Error ? e.message : String(e)}` },
+      { error: "Échec de l'enregistrement du fichier." },
       { status: 500 },
     );
   }
