@@ -184,7 +184,7 @@ export const en: Dictionary = {
       },
     ],
     ctaEyebrow: "Book now",
-    ctaTitlePrefix: "Your stay in ",
+    ctaTitle: "Jerusalem Rent, the art of hospitality in Jerusalem",
     ctaText: "Prestige apartments, a team at your side from your first message to your departure.",
     ctaButton: "Check availability",
   },

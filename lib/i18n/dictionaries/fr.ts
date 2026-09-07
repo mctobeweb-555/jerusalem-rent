@@ -188,7 +188,7 @@ export const fr: Dictionary = {
       },
     ],
     ctaEyebrow: "Réserver maintenant",
-    ctaTitlePrefix: "Votre séjour à ",
+    ctaTitle: "Jerusalem Rent, l'art de recevoir à Jérusalem",
     ctaText: "Des appartements de prestige, une équipe à votre écoute du premier message à votre départ.",
     ctaButton: "Voir les disponibilités",
   },

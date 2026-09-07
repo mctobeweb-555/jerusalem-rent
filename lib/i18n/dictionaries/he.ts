@@ -180,7 +180,7 @@ export const he: Dictionary = {
       },
     ],
     ctaEyebrow: "הזמינו עכשיו",
-    ctaTitlePrefix: "השהות שלכם ב-",
+    ctaTitle: "Jerusalem Rent, אמנות האירוח בירושלים",
     ctaText: "דירות יוקרה וצוות זמין עבורכם מההודעה הראשונה ועד ליציאה.",
     ctaButton: "בדקו זמינות",
   },

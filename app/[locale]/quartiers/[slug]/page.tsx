@@ -9,6 +9,7 @@ import ShortTermSearchBar from "@/components/ShortTermSearchBar";
 import ReviewStars from "@/components/ReviewStars";
 import { ArrowRightIcon, ArrowLeftIcon } from "@/components/icons";
 import { reviewStats } from "@/lib/reviews";
+import { getWhatsappConfig } from "@/lib/site-settings";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, localizedHref, type Locale } from "@/lib/i18n/config";
 import { withTranslatedTitle } from "@/lib/i18n/property-translation";
@@ -46,7 +47,7 @@ const USP_IMAGES = [
 const CTA_BANNER_IMAGE = "/brand/lifestyle-sejour.jpg";
 
 async function getNeighborhoodData(name: string, locale: Locale) {
-  const [properties, total, reviews] = await Promise.all([
+  const [properties, total] = await Promise.all([
     prisma.property.findMany({
       where: { published: true, neighborhood: name },
       orderBy: { createdAt: "desc" },
@@ -57,12 +58,18 @@ async function getNeighborhoodData(name: string, locale: Locale) {
       },
     }),
     prisma.property.count({ where: { published: true, neighborhood: name } }),
-    prisma.review.findMany({
-      where: { published: true, property: { neighborhood: name, published: true } },
-      select: { rating: true },
-    }),
   ]);
-  return { properties, total, stats: reviewStats(reviews) };
+  return { properties, total };
+}
+
+// Avis tous quartiers confondus — la bannière finale parle de la marque
+// Jerusalem Rent, pas du quartier (cf. retour utilisateur).
+async function getSiteReviewStats() {
+  const reviews = await prisma.review.findMany({
+    where: { published: true, property: { published: true } },
+    select: { rating: true },
+  });
+  return reviewStats(reviews);
 }
 
 export async function generateMetadata({
@@ -129,7 +136,11 @@ export default async function NeighborhoodPage({
   const rtl = locale === "he";
   const Arrow = rtl ? ArrowLeftIcon : ArrowRightIcon;
 
-  const { properties, total, stats } = await getNeighborhoodData(n.name, locale);
+  const [{ properties, total }, stats, whatsapp] = await Promise.all([
+    getNeighborhoodData(n.name, locale),
+    getSiteReviewStats(),
+    getWhatsappConfig(),
+  ]);
   const items = properties.map((p) => withTranslatedTitle(p, locale));
 
   const story = n.story ?? {
@@ -198,7 +209,7 @@ export default async function NeighborhoodPage({
       </section>
 
       {/* Bloc éditorial 1 : histoire / caractère du quartier. */}
-      <section className="container-page py-24 sm:py-32">
+      <section className="container-page py-14 sm:py-20">
         <Editorial
           eyebrow={story.eyebrow[locale]}
           title={story.title[locale]}
@@ -207,7 +218,7 @@ export default async function NeighborhoodPage({
       </section>
 
       {/* Carousel des annonces du quartier. */}
-      <section className="pb-24 sm:pb-32">
+      <section className="pb-14 sm:pb-20">
         <div className="container-page text-center">
           <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent-700">
             {dict.neighborhoodPage.listingsEyebrow}
@@ -235,7 +246,7 @@ export default async function NeighborhoodPage({
       </section>
 
       {/* Bloc éditorial 2 : vivre / séjourner dans le quartier. */}
-      <section className="bg-stone-50 py-24 sm:py-32">
+      <section className="bg-stone-50 py-14 sm:py-20">
         <div className="container-page">
           <Editorial
             eyebrow={lifestyle.eyebrow[locale]}
@@ -245,10 +256,31 @@ export default async function NeighborhoodPage({
         </div>
       </section>
 
+      {/* Réservation directe par WhatsApp — même bandeau que la home. */}
+      {whatsapp && (
+        <section className="py-12">
+          <div className="container-page">
+            <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-4 bg-primary-600 px-6 py-6 sm:flex-row sm:gap-8 sm:px-10">
+              <p className="text-center text-sm text-white/90 sm:text-start">
+                {dict.home.whatsappCtaText}
+              </p>
+              <a
+                href={`https://wa.me/${whatsapp.number.replace(/\D/g, "")}?text=${encodeURIComponent(whatsapp.message)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn shrink-0 border-white/50 px-5 py-2 text-xs uppercase tracking-[0.15em] text-white hover:bg-white hover:text-primary-700"
+              >
+                {dict.home.whatsappCtaButton}
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Arguments Jerusalem Rent, en cartes visuelles : image + pastille de
           marque, puis panneau blanc en débord sur la photo (motif repris de
           la référence fournie par le client). */}
-      <section className="container-page py-24 sm:py-32">
+      <section className="container-page py-14 sm:py-20">
         <div className="mx-auto max-w-[46rem] text-center">
           <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent-700">
             {dict.neighborhoodPage.uspEyebrow}
@@ -284,7 +316,9 @@ export default async function NeighborhoodPage({
         </div>
       </section>
 
-      {/* Bannière finale : visuel de séjour, logo, accroche, avis, CTA. */}
+      {/* Bannière finale : marque Jerusalem Rent (pas le quartier — demande
+          explicite utilisateur), avis tous quartiers confondus, CTA vers
+          toutes les annonces. */}
       <section className="relative overflow-hidden text-white">
         <div className="relative min-h-[560px] w-full sm:min-h-[620px]">
           <Image src={CTA_BANNER_IMAGE} alt="" fill sizes="100vw" className="object-cover" />
@@ -316,8 +350,7 @@ export default async function NeighborhoodPage({
               {dict.neighborhoodPage.ctaEyebrow}
             </p>
             <h2 className="mt-5 font-display text-4xl font-extralight leading-[1.1] text-white sm:text-5xl">
-              {dict.neighborhoodPage.ctaTitlePrefix}
-              {n.name}
+              {dict.neighborhoodPage.ctaTitle}
             </h2>
             <p className="mt-6 text-base font-light leading-relaxed text-white/85">
               {dict.neighborhoodPage.ctaText}
@@ -333,7 +366,7 @@ export default async function NeighborhoodPage({
             )}
 
             <Link
-              href={href(`/annonces?neighborhood=${encodeURIComponent(n.name)}`)}
+              href={href("/annonces")}
               className="btn mt-10 border-white/70 px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-primary-700"
             >
               {dict.neighborhoodPage.ctaButton}

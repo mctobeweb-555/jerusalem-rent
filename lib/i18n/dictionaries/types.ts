@@ -89,7 +89,7 @@ export type Dictionary = {
     uspTitle: string;
     usp: { title: string; text: string }[];
     ctaEyebrow: string;
-    ctaTitlePrefix: string;
+    ctaTitle: string;
     ctaText: string;
     ctaButton: string;
   };
