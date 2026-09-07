@@ -7,6 +7,7 @@ export type Dictionary = {
     faq: { title: string; description: string };
     contact: { title: string; description: string };
     about: { title: string; description: string };
+    neighborhood: { title: (name: string) => string; description: (name: string) => string };
     mentionsLegales: string;
     confidentialite: string;
     cgu: string;
@@ -73,6 +74,24 @@ export type Dictionary = {
     neighborhoodCount: (n: number) => string;
     whatsappCtaText: string;
     whatsappCtaButton: string;
+  };
+  neighborhoodPage: {
+    heroEyebrow: string;
+    apartmentsAvailable: (n: number) => string;
+    storyFallbackText: (name: string) => string;
+    lifestyleFallbackEyebrow: string;
+    lifestyleFallbackTitle: string;
+    lifestyleFallbackText: (name: string) => string;
+    listingsEyebrow: string;
+    listingsTitle: (name: string) => string;
+    listingsEmpty: string;
+    uspEyebrow: string;
+    uspTitle: string;
+    usp: { title: string; text: string }[];
+    ctaEyebrow: string;
+    ctaTitlePrefix: string;
+    ctaText: string;
+    ctaButton: string;
   };
   search: {
     buy: string;

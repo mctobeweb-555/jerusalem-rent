@@ -37,11 +37,18 @@ function Field({
 // Barre de recherche « courte durée » : ville + dates + voyageurs.
 // variant "card" = carte flottante arrondie (usage historique dans le hero) ;
 // "band" = bandeau plein écran plat, collé au header (façon Marriott/St. Regis).
-export default function ShortTermSearchBar({ variant = "card" }: { variant?: "card" | "band" }) {
+export default function ShortTermSearchBar({
+  variant = "card",
+  defaultNeighborhood = "",
+}: {
+  variant?: "card" | "band";
+  // Pré-sélectionne un quartier (page dédiée /quartiers/[slug]) — reste modifiable.
+  defaultNeighborhood?: string;
+}) {
   const router = useRouter();
   const dict = useDict();
   const locale = useLocale();
-  const [neighborhood, setNeighborhood] = useState("");
+  const [neighborhood, setNeighborhood] = useState(defaultNeighborhood);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState<Guests>({

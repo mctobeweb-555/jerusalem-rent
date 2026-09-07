@@ -34,6 +34,11 @@ export const fr: Dictionary = {
       description:
         "Découvrez Jerusalem Rent, votre agence immobilière : notre équipe, nos valeurs et notre accompagnement pour acheter, vendre ou louer.",
     },
+    neighborhood: {
+      title: (name) => `Appartements à louer à ${name}, Jérusalem`,
+      description: (name) =>
+        `Découvrez nos appartements de prestige à ${name}, Jérusalem : location courte ou longue durée, emplacement idéal, confort haut de gamme.`,
+    },
     mentionsLegales: "Mentions légales",
     confidentialite: "Politique de confidentialité",
     cgu: "Conditions générales d'utilisation",
@@ -141,6 +146,47 @@ export const fr: Dictionary = {
     whatsappCtaText:
       "Notre équipe vous répond rapidement pour organiser votre séjour et répondre à toutes vos questions.",
     whatsappCtaButton: "Discuter sur WhatsApp",
+  },
+  neighborhoodPage: {
+    heroEyebrow: "Quartier de Jérusalem",
+    apartmentsAvailable: (n) => `${n} appartement${n > 1 ? "s" : ""} disponible${n > 1 ? "s" : ""}`,
+    storyFallbackText: (name) =>
+      `${name} est l'un des quartiers les plus recherchés de Jérusalem, entre charme historique et adresses de prestige. Nos appartements y offrent un point de départ idéal pour explorer la ville, entre pierre de Jérusalem et art de vivre contemporain.`,
+    lifestyleFallbackEyebrow: "Vivre ici",
+    lifestyleFallbackTitle: "Un séjour à la hauteur du quartier",
+    lifestyleFallbackText: (name) =>
+      `Chaque appartement Jerusalem Rent à ${name} est sélectionné pour son emplacement, son confort et son caractère — pour un séjour aussi mémorable que le quartier qui l'entoure.`,
+    listingsEyebrow: "Sélection",
+    listingsTitle: (name) => `Nos appartements à ${name}`,
+    listingsEmpty: "Aucun appartement disponible pour le moment dans ce quartier — contactez-nous, de nouvelles adresses arrivent régulièrement.",
+    uspEyebrow: "L'expérience Jerusalem Rent",
+    uspTitle: "Pourquoi réserver avec nous",
+    usp: [
+      {
+        title: "Occasions spéciales",
+        text: "Anniversaire, lune de miel, fêtes juives : nous personnalisons votre arrivée pour rendre chaque séjour inoubliable.",
+      },
+      {
+        title: "Emplacement",
+        text: "Des adresses sélectionnées au cœur des quartiers les plus prisés, à deux pas des lieux incontournables de Jérusalem.",
+      },
+      {
+        title: "Conseils tourisme",
+        text: "Notre équipe locale vous oriente vers les meilleures visites, restaurants et expériences, loin des sentiers battus.",
+      },
+      {
+        title: "Confort",
+        text: "Literie haut de gamme, cuisine équipée, climatisation : chaque appartement est pensé pour un séjour sans compromis.",
+      },
+      {
+        title: "Nettoyage impeccable",
+        text: "Un protocole de nettoyage rigoureux avant chaque arrivée, pour un appartement impeccable du sol au plafond.",
+      },
+    ],
+    ctaEyebrow: "Réserver maintenant",
+    ctaTitlePrefix: "Votre séjour à ",
+    ctaText: "Des appartements de prestige, une équipe à votre écoute du premier message à votre départ.",
+    ctaButton: "Voir les disponibilités",
   },
   search: {
     buy: "Acheter",

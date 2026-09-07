@@ -10,12 +10,26 @@ import type { Locale } from "@/lib/i18n/config";
 // carousel — pas de granularité par quartier en base aujourd'hui, valeurs
 // indicatives cohérentes avec le tri décroissant, à remplacer par un vrai
 // comptage si besoin (le champ `Property.neighborhood` existe désormais).
+// Bloc éditorial (eyebrow + titre + texte) — utilisé deux fois sur la page
+// SEO dédiée à un quartier (`/[locale]/quartiers/[slug]`). Optionnel : tant
+// qu'un quartier n'a pas sa rédaction dédiée, la page retombe sur un texte
+// générique (cf. app/[locale]/quartiers/[slug]/page.tsx).
+export type NeighborhoodEditorial = {
+  eyebrow: Record<Locale, string>;
+  title: Record<Locale, string>;
+  text: Record<Locale, string>;
+};
+
 export type Neighborhood = {
   slug: string;
   name: string;
   tagline: Record<Locale, string>;
   image: string;
   count: number;
+  // Histoire/caractère du quartier (1er bloc éditorial de la page dédiée).
+  story?: NeighborhoodEditorial;
+  // Vivre dans le quartier / expérience de séjour (2ᵉ bloc éditorial).
+  lifestyle?: NeighborhoodEditorial;
 };
 
 export const NEIGHBORHOODS: Neighborhood[] = [
@@ -29,6 +43,40 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     },
     image: "/brand/neighborhoods/nahalat-shiva.jpg",
     count: 14,
+    story: {
+      eyebrow: {
+        fr: "Quartier historique",
+        en: "Historic quarter",
+        he: "רובע היסטורי",
+      },
+      title: {
+        fr: "Nahalat Shiva, l'âme artistique de Jérusalem",
+        en: "Nahalat Shiva, the artistic soul of Jerusalem",
+        he: "נחלת שבעה, הנשמה האמנותית של ירושלים",
+      },
+      text: {
+        fr: "Fondé en 1869, Nahalat Shiva fut l'un des tout premiers quartiers bâtis hors des remparts de la vieille ville. Aujourd'hui, ses ruelles pavées et ses cours intérieures abritent galeries d'art, ateliers d'artisans et terrasses animées jusque tard le soir. À deux pas de la rue Ben Yehuda et du marché Mahane Yehuda, c'est l'adresse idéale pour vivre Jérusalem au rythme de ses habitants, entre pierre centenaire et effervescence contemporaine.",
+        en: "Founded in 1869, Nahalat Shiva was one of the very first neighborhoods built outside the Old City walls. Today, its cobbled lanes and inner courtyards are home to art galleries, artisan workshops and terraces buzzing late into the evening. Just steps from Ben Yehuda Street and Mahane Yehuda Market, it's the perfect address to experience Jerusalem at the pace of its residents — where century-old stone meets contemporary energy.",
+        he: "נחלת שבעה, שנוסדה ב-1869, הייתה אחת השכונות הראשונות שנבנו מחוץ לחומות העיר העתיקה. כיום, סמטאותיה המרוצפות וחצרותיה הפנימיות מארחות גלריות אמנות, סדנאות אומנים ומרפסות קפה תוססות עד השעות הקטנות. במרחק דקות הליכה מרחוב בן יהודה ומשוק מחנה יהודה, זהו המקום המושלם לחוות את ירושלים בקצב תושביה — במפגש בין אבן ירושלמית עתיקת יומין לתוסס העכשווי.",
+      },
+    },
+    lifestyle: {
+      eyebrow: {
+        fr: "Vivre à Nahalat Shiva",
+        en: "Living in Nahalat Shiva",
+        he: "לגור בנחלת שבעה",
+      },
+      title: {
+        fr: "Un pied-à-terre au cœur de la ville qui ne dort jamais",
+        en: "A pied-à-terre in the heart of the city that never sleeps",
+        he: "בית זמני בלב העיר שלא ישנה לעולם",
+      },
+      text: {
+        fr: "Nos appartements à Nahalat Shiva conjuguent le charme de l'architecture ottomane — voûtes en pierre, hauts plafonds, patios ombragés — avec tout le confort moderne d'une location de prestige. Le matin, un café sur une terrasse ensoleillée ; le soir, les meilleures tables et bars à vin de la ville à quelques minutes à pied. Une base parfaite pour explorer Jérusalem sans jamais avoir besoin d'une voiture.",
+        en: "Our apartments in Nahalat Shiva combine the charm of Ottoman-era architecture — stone vaults, high ceilings, shaded courtyards — with all the modern comfort you'd expect from a prestige rental. Coffee on a sunlit terrace in the morning; the city's best restaurants and wine bars a short walk away in the evening. The perfect base to explore Jerusalem without ever needing a car.",
+        he: "הדירות שלנו בנחלת שבעה משלבות את קסמה של האדריכלות העות'מאנית — קמרונות אבן, תקרות גבוהות, חצרות מוצלות — עם כל הנוחות המודרנית המצופה משכירות יוקרתית. בבוקר, כוס קפה במרפסת שטופת שמש; בערב, המסעדות וברי היין הטובים בעיר במרחק הליכה קצרה. בסיס מושלם לגלות את ירושלים בלי צורך ברכב.",
+      },
+    },
   },
   {
     slug: "city-center-rav-kook",

@@ -32,6 +32,11 @@ export const en: Dictionary = {
       description:
         "Discover Jerusalem Rent, your real estate agency: our team, our values, and how we support you when buying, selling or renting.",
     },
+    neighborhood: {
+      title: (name) => `Apartments for rent in ${name}, Jerusalem`,
+      description: (name) =>
+        `Discover our prestige apartments in ${name}, Jerusalem: short or long term rental, prime location, premium comfort.`,
+    },
     mentionsLegales: "Legal notice",
     confidentialite: "Privacy policy",
     cgu: "Terms of use",
@@ -137,6 +142,47 @@ export const en: Dictionary = {
     neighborhoodCount: (n) => `${n} apartment${n > 1 ? "s" : ""}`,
     whatsappCtaText: "Our team replies quickly to help plan your stay and answer any question you may have.",
     whatsappCtaButton: "Chat on WhatsApp",
+  },
+  neighborhoodPage: {
+    heroEyebrow: "Jerusalem neighborhood",
+    apartmentsAvailable: (n) => `${n} apartment${n > 1 ? "s" : ""} available`,
+    storyFallbackText: (name) =>
+      `${name} is one of Jerusalem's most sought-after neighborhoods, blending historic charm with prestige addresses. Our apartments here offer an ideal base to explore the city, between Jerusalem stone and contemporary living.`,
+    lifestyleFallbackEyebrow: "Living here",
+    lifestyleFallbackTitle: "A stay that matches the neighborhood",
+    lifestyleFallbackText: (name) =>
+      `Every Jerusalem Rent apartment in ${name} is selected for its location, comfort and character — for a stay as memorable as the neighborhood around it.`,
+    listingsEyebrow: "Selection",
+    listingsTitle: (name) => `Our apartments in ${name}`,
+    listingsEmpty: "No apartment currently available in this neighborhood — get in touch, new addresses are added regularly.",
+    uspEyebrow: "The Jerusalem Rent experience",
+    uspTitle: "Why book with us",
+    usp: [
+      {
+        title: "Special occasions",
+        text: "Birthdays, honeymoons, Jewish holidays: we personalise your arrival to make every stay unforgettable.",
+      },
+      {
+        title: "Prime location",
+        text: "Handpicked addresses in Jerusalem's most sought-after neighborhoods, steps from the city's must-sees.",
+      },
+      {
+        title: "Local insight",
+        text: "Our local team points you to the best tours, restaurants and experiences, off the beaten track.",
+      },
+      {
+        title: "Comfort",
+        text: "Premium linens, fully equipped kitchen, air conditioning: every apartment is designed for an effortless stay.",
+      },
+      {
+        title: "Spotless cleaning",
+        text: "A rigorous cleaning protocol before every arrival, for a spotless apartment from floor to ceiling.",
+      },
+    ],
+    ctaEyebrow: "Book now",
+    ctaTitlePrefix: "Your stay in ",
+    ctaText: "Prestige apartments, a team at your side from your first message to your departure.",
+    ctaButton: "Check availability",
   },
   search: {
     buy: "Buy",

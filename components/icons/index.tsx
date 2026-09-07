@@ -193,6 +193,25 @@ export function ClockIcon(props: IconProps) {
   );
 }
 
+export function SparkleIcon(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M11 3c.6 2.8 1.4 4.4 2.7 5.7C15 10 16.6 10.8 19 11.4c-2.4.6-4 1.4-5.3 2.7-1.3 1.3-2.1 2.9-2.7 5.7-.6-2.8-1.4-4.4-2.7-5.7C6.9 12.8 5.4 12 3 11.4c2.4-.6 3.9-1.4 5.3-2.7C9.6 7.4 10.4 5.8 11 3Z" />
+      <path d="M18.5 3.5c.3 1.2.7 1.9 1.7 2.5-1 .6-1.4 1.3-1.7 2.5-.3-1.2-.7-1.9-1.7-2.5 1-.6 1.4-1.3 1.7-2.5Z" />
+    </Base>
+  );
+}
+
+export function ComfortIcon(props: IconProps) {
+  return (
+    <Base {...props}>
+      <path d="M3 16v-3a2.5 2.5 0 0 1 2.5-2.5h13A2.5 2.5 0 0 1 21 13v3" />
+      <path d="M3 16h18v2.5a1 1 0 0 1-1 1h-1.5v-1H6.5v1H5a1 1 0 0 1-1-1V16Z" />
+      <path d="M6 10.5V8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2M13 10.5V8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2.5" />
+    </Base>
+  );
+}
+
 export function LinkIcon(props: IconProps) {
   return (
     <Base {...props}>
