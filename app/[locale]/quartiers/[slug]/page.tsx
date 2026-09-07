@@ -7,7 +7,7 @@ import PropertyCard from "@/components/PropertyCard";
 import FeaturedCarousel from "@/components/FeaturedCarousel";
 import ShortTermSearchBar from "@/components/ShortTermSearchBar";
 import ReviewStars from "@/components/ReviewStars";
-import { HeartIcon, PinIcon, CompassIcon, ComfortIcon, SparkleIcon } from "@/components/icons";
+import { ArrowRightIcon, ArrowLeftIcon } from "@/components/icons";
 import { reviewStats } from "@/lib/reviews";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, localizedHref, type Locale } from "@/lib/i18n/config";
@@ -27,13 +27,23 @@ export async function generateStaticParams() {
   );
 }
 
-// Icônes des arguments Jerusalem Rent, dans l'ordre de dict.neighborhoodPage.usp.
-const USP_ICONS = [HeartIcon, PinIcon, CompassIcon, ComfortIcon, SparkleIcon];
+// Visuels des arguments — un par entrée de dict.neighborhoodPage.usp, dans le
+// même ordre. Vraies photos des appartements importés (recadrées dans
+// public/brand/usp/), choisies pour illustrer chaque argument : cuisine avec
+// plata, façade en pierre de Jérusalem, lit avec serviettes, terrasse, salon,
+// salle de bains.
+const USP_IMAGES = [
+  "/brand/usp/cuisine-chabbat.jpg",
+  "/brand/usp/emplacement.jpg",
+  "/brand/usp/confort-hotelier.jpg",
+  "/brand/usp/terrasses.jpg",
+  "/brand/usp/equipe.jpg",
+  "/brand/usp/proprete.jpg",
+];
 
-// Photo de la bannière finale : en attendant un visuel dédié "vie sur place"
-// (personnes dans un appartement), on reprend l'intérieur de marque le plus
-// chaleureux déjà utilisé sur le site.
-const CTA_BANNER_IMAGE = "/brand/hero-jerusalem-2.jpg";
+// Bannière finale. À remplacer par un visuel « de vie » (des personnes dans
+// un appartement) dès qu'on en aura un — un seul chemin à changer ici.
+const CTA_BANNER_IMAGE = "/brand/lifestyle-sejour.jpg";
 
 async function getNeighborhoodData(name: string, locale: Locale) {
   const [properties, total, reviews] = await Promise.all([
@@ -79,6 +89,31 @@ export async function generateMetadata({
   };
 }
 
+// Bloc éditorial centré : surtitre fin doré, grand titre très léger, texte
+// en mesure étroite. Beaucoup d'air autour — c'est ce rapport
+// titre/blanc/texte qui donne le rendu « magazine » des sites de référence.
+function Editorial({
+  eyebrow,
+  title,
+  text,
+}: {
+  eyebrow: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="mx-auto max-w-[46rem] text-center">
+      <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent-700">
+        {eyebrow}
+      </p>
+      <h2 className="mt-6 font-display text-4xl font-extralight leading-[1.12] text-stone-900 sm:text-5xl lg:text-[3.5rem]">
+        {title}
+      </h2>
+      <p className="mt-8 text-base leading-[1.9] text-stone-500 sm:text-lg">{text}</p>
+    </div>
+  );
+}
+
 export default async function NeighborhoodPage({
   params,
 }: {
@@ -92,6 +127,7 @@ export default async function NeighborhoodPage({
   const dict = getDictionary(locale);
   const href = (path: string) => localizedHref(locale, path);
   const rtl = locale === "he";
+  const Arrow = rtl ? ArrowLeftIcon : ArrowRightIcon;
 
   const { properties, total, stats } = await getNeighborhoodData(n.name, locale);
   const items = properties.map((p) => withTranslatedTitle(p, locale));
@@ -125,9 +161,9 @@ export default async function NeighborhoodPage({
 
   return (
     <>
-      {/* Hero plein écran : photo du quartier, nom, slogan. */}
+      {/* Hero plein écran : photo du quartier, nom, slogan, nb d'appartements. */}
       <section className="relative overflow-hidden text-white">
-        <div className="relative h-[60vh] min-h-[420px] w-full sm:h-[70vh]">
+        <div className="relative h-[68vh] min-h-[460px] w-full sm:h-[78vh]">
           <Image
             src={n.image}
             alt={n.name}
@@ -136,17 +172,19 @@ export default async function NeighborhoodPage({
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
         </div>
-        <div className="container-page absolute inset-0 flex flex-col justify-end pb-14">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-white/80">
+        <div className="container-page absolute inset-0 flex flex-col justify-end pb-16 sm:pb-20">
+          <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.35em] text-white/75">
             {dict.neighborhoodPage.heroEyebrow}
           </p>
-          <h1 className="max-w-3xl font-display text-4xl font-extralight uppercase leading-tight tracking-[0.04em] text-white sm:text-6xl">
+          <h1 className="max-w-4xl font-display text-5xl font-extralight uppercase leading-[1.05] tracking-[0.03em] text-white sm:text-7xl">
             {n.name}
           </h1>
-          <p className="mt-5 max-w-xl text-base font-light text-white/85">{n.tagline[locale]}</p>
-          <p className="mt-6 text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+          <p className="mt-6 max-w-xl text-base font-light leading-relaxed text-white/85 sm:text-lg">
+            {n.tagline[locale]}
+          </p>
+          <p className="mt-7 text-[11px] font-medium uppercase tracking-[0.25em] text-white/65">
             {dict.neighborhoodPage.apartmentsAvailable(total)}
           </p>
         </div>
@@ -160,35 +198,31 @@ export default async function NeighborhoodPage({
       </section>
 
       {/* Bloc éditorial 1 : histoire / caractère du quartier. */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.25em] text-primary-600">
-            {story.eyebrow[locale]}
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-light leading-[2.75rem] text-stone-900 sm:text-4xl">
-            {story.title[locale]}
-          </h2>
-          <p className="mt-5 text-sm leading-relaxed text-stone-500 sm:text-base">{story.text[locale]}</p>
-        </div>
+      <section className="container-page py-24 sm:py-32">
+        <Editorial
+          eyebrow={story.eyebrow[locale]}
+          title={story.title[locale]}
+          text={story.text[locale]}
+        />
       </section>
 
       {/* Carousel des annonces du quartier. */}
-      <section className="pb-16 sm:pb-20">
+      <section className="pb-24 sm:pb-32">
         <div className="container-page text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.25em] text-primary-600">
+          <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent-700">
             {dict.neighborhoodPage.listingsEyebrow}
           </p>
-          <h2 className="mt-3 font-display text-3xl font-light uppercase tracking-[0.1em] text-primary-900">
+          <h2 className="mt-6 font-display text-4xl font-extralight leading-[1.12] text-stone-900 sm:text-5xl">
             {dict.neighborhoodPage.listingsTitle(n.name)}
           </h2>
         </div>
 
         {items.length === 0 ? (
-          <p className="container-page mt-6 text-center text-stone-500">
+          <p className="container-page mt-8 text-center text-stone-500">
             {dict.neighborhoodPage.listingsEmpty}
           </p>
         ) : (
-          <div className="mt-10">
+          <div className="mt-14">
             <FeaturedCarousel
               items={items.map((p) => ({
                 id: p.id,
@@ -201,82 +235,111 @@ export default async function NeighborhoodPage({
       </section>
 
       {/* Bloc éditorial 2 : vivre / séjourner dans le quartier. */}
-      <section className="bg-stone-50 py-16 sm:py-20">
-        <div className="container-page mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.25em] text-primary-600">
-            {lifestyle.eyebrow[locale]}
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-light leading-[2.75rem] text-stone-900 sm:text-4xl">
-            {lifestyle.title[locale]}
-          </h2>
-          <p className="mt-5 text-sm leading-relaxed text-stone-500 sm:text-base">{lifestyle.text[locale]}</p>
+      <section className="bg-stone-50 py-24 sm:py-32">
+        <div className="container-page">
+          <Editorial
+            eyebrow={lifestyle.eyebrow[locale]}
+            title={lifestyle.title[locale]}
+            text={lifestyle.text[locale]}
+          />
         </div>
       </section>
 
-      {/* Arguments Jerusalem Rent. */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.25em] text-primary-600">
+      {/* Arguments Jerusalem Rent, en cartes visuelles : image + pastille de
+          marque, puis panneau blanc en débord sur la photo (motif repris de
+          la référence fournie par le client). */}
+      <section className="container-page py-24 sm:py-32">
+        <div className="mx-auto max-w-[46rem] text-center">
+          <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-accent-700">
             {dict.neighborhoodPage.uspEyebrow}
           </p>
-          <h2 className="mt-3 font-display text-3xl font-light uppercase tracking-[0.1em] text-primary-900">
+          <h2 className="mt-6 font-display text-4xl font-extralight leading-[1.12] text-stone-900 sm:text-5xl">
             {dict.neighborhoodPage.uspTitle}
           </h2>
         </div>
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-          {dict.neighborhoodPage.usp.map((item, i) => {
-            const Icon = USP_ICONS[i % USP_ICONS.length];
-            return (
-              <div key={item.title} className="text-center sm:text-start">
-                <span className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-primary-200 text-primary-700 sm:mx-0">
-                  <Icon className="h-5 w-5" />
+
+        <div className="mt-16 grid gap-x-8 gap-y-14 md:grid-cols-2 lg:gap-x-12">
+          {dict.neighborhoodPage.usp.map((item, i) => (
+            <article key={item.title} className="group">
+              <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
+                <Image
+                  src={USP_IMAGES[i % USP_IMAGES.length]}
+                  alt=""
+                  fill
+                  sizes="(min-width: 768px) 45vw, 100vw"
+                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
+                />
+                <span className="absolute start-0 top-0 m-5 bg-primary-600 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.2em] text-white">
+                  Jerusalem Rent
                 </span>
-                <p className="mt-4 font-display text-base font-light uppercase tracking-[0.08em] text-stone-900">
-                  {item.title}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.text}</p>
               </div>
-            );
-          })}
+              <div className="relative z-10 -mt-14 me-auto w-[88%] bg-white p-7 sm:p-9">
+                <h3 className="font-display text-2xl font-light leading-snug text-stone-900 sm:text-[1.7rem]">
+                  {item.title}
+                </h3>
+                <p className="mt-4 text-sm leading-[1.85] text-stone-500">{item.text}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      {/* Bannière finale : photo + logo + accroche + CTA + avis. */}
+      {/* Bannière finale : visuel de séjour, logo, accroche, avis, CTA. */}
       <section className="relative overflow-hidden text-white">
-        <div className="relative min-h-[420px] w-full sm:min-h-[480px]">
-          <Image
-            src={CTA_BANNER_IMAGE}
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
+        <div className="relative min-h-[560px] w-full sm:min-h-[620px]">
+          <Image src={CTA_BANNER_IMAGE} alt="" fill sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-black/25" />
+          <div
+            className={`absolute inset-0 ${
+              rtl
+                ? "bg-gradient-to-l from-black/85 via-black/55 to-transparent"
+                : "bg-gradient-to-r from-black/85 via-black/55 to-transparent"
+            }`}
           />
-          <div className="absolute inset-0 bg-black/55" />
         </div>
-        <div className="container-page absolute inset-0 flex flex-col items-center justify-center text-center">
-          <Image src="/brand/logo.png" alt="Jerusalem Rent" width={220} height={53} className="h-12 w-auto brightness-0 invert sm:h-14" />
-          <p className="mt-8 text-xs font-medium uppercase tracking-[0.25em] text-white/80">
-            {dict.neighborhoodPage.ctaEyebrow}
-          </p>
-          <h2 className="mt-3 max-w-xl font-display text-3xl font-extralight uppercase tracking-[0.04em] text-white sm:text-4xl">
-            {dict.neighborhoodPage.ctaTitlePrefix}
-            {n.name}
-          </h2>
-          <p className="mt-4 max-w-md text-sm font-light text-white/85">{dict.neighborhoodPage.ctaText}</p>
 
-          {stats && (
-            <div className="mt-5 flex items-center gap-2">
-              <ReviewStars rating={stats.average} />
-              <span className="text-xs text-white/80">{dict.property.reviewsCount(stats.average, stats.count)}</span>
-            </div>
-          )}
+        <div className="container-page absolute inset-0 flex items-center">
+          <div className="max-w-xl">
+            {/* logo-white.png, pas logo.png + `brightness-0 invert` : le logo
+                source a un disque opaque quasi-blanc derrière l'emblème
+                (invisible sur fond blanc, mais qui rend comme une pastille
+                blanche pleine sur une photo). La variante blanche est générée
+                avec un alpha recalculé, fond réellement transparent. */}
+            <Image
+              src="/brand/logo-white.png"
+              alt="Jerusalem Rent"
+              width={220}
+              height={53}
+              className="h-12 w-auto sm:h-14"
+            />
+            <p className="mt-9 text-[11px] font-medium uppercase tracking-[0.3em] text-white/75">
+              {dict.neighborhoodPage.ctaEyebrow}
+            </p>
+            <h2 className="mt-5 font-display text-4xl font-extralight leading-[1.1] text-white sm:text-5xl">
+              {dict.neighborhoodPage.ctaTitlePrefix}
+              {n.name}
+            </h2>
+            <p className="mt-6 text-base font-light leading-relaxed text-white/85">
+              {dict.neighborhoodPage.ctaText}
+            </p>
 
-          <Link
-            href={href(`/annonces?neighborhood=${encodeURIComponent(n.name)}`)}
-            className="btn-primary mt-8 rounded-none px-8 py-3 text-xs uppercase tracking-[0.15em]"
-          >
-            {dict.neighborhoodPage.ctaButton}
-          </Link>
+            {stats && (
+              <div className="mt-7 flex items-center gap-3">
+                <ReviewStars rating={stats.average} />
+                <span className="text-xs text-white/75">
+                  {dict.property.reviewsCount(stats.average, stats.count)}
+                </span>
+              </div>
+            )}
+
+            <Link
+              href={href(`/annonces?neighborhood=${encodeURIComponent(n.name)}`)}
+              className="btn mt-10 border-white/70 px-8 py-3.5 text-[11px] uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-primary-700"
+            >
+              {dict.neighborhoodPage.ctaButton}
+              <Arrow className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
     </>

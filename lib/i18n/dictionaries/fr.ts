@@ -163,24 +163,28 @@ export const fr: Dictionary = {
     uspTitle: "Pourquoi réserver avec nous",
     usp: [
       {
-        title: "Occasions spéciales",
-        text: "Anniversaire, lune de miel, fêtes juives : nous personnalisons votre arrivée pour rendre chaque séjour inoubliable.",
+        title: "Prêt pour Chabbat",
+        text: "Plata de Chabbat dans chacun de nos appartements, cuisines cachères disponibles et terrasses soucca : vous arrivez, tout est déjà prêt.",
       },
       {
-        title: "Emplacement",
-        text: "Des adresses sélectionnées au cœur des quartiers les plus prisés, à deux pas des lieux incontournables de Jérusalem.",
+        title: "Au cœur de la ville",
+        text: "Des adresses choisies dans les quartiers les plus recherchés — la vieille ville, les synagogues et les meilleures tables à quelques minutes à pied.",
       },
       {
-        title: "Conseils tourisme",
-        text: "Notre équipe locale vous oriente vers les meilleures visites, restaurants et expériences, loin des sentiers battus.",
+        title: "Confort hôtelier",
+        text: "Draps et serviettes fournis, climatisation, lave-linge et sèche-linge : le service d'un hôtel avec l'espace et l'intimité d'un appartement.",
       },
       {
-        title: "Confort",
-        text: "Literie haut de gamme, cuisine équipée, climatisation : chaque appartement est pensé pour un séjour sans compromis.",
+        title: "Balcons & terrasses",
+        text: "Balcons, grandes terrasses et jardins privés pour profiter de la douceur des soirées de Jérusalem, chez vous.",
       },
       {
-        title: "Nettoyage impeccable",
-        text: "Un protocole de nettoyage rigoureux avant chaque arrivée, pour un appartement impeccable du sol au plafond.",
+        title: "Une équipe qui vous parle",
+        text: "Eric et son équipe vous répondent en français, en anglais et en hébreu — avant la réservation comme pendant tout votre séjour.",
+      },
+      {
+        title: "Propreté irréprochable",
+        text: "Un ménage professionnel avant chaque arrivée, contrôlé appartement par appartement, sans exception.",
       },
     ],
     ctaEyebrow: "Réserver maintenant",

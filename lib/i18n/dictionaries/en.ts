@@ -159,24 +159,28 @@ export const en: Dictionary = {
     uspTitle: "Why book with us",
     usp: [
       {
-        title: "Special occasions",
-        text: "Birthdays, honeymoons, Jewish holidays: we personalise your arrival to make every stay unforgettable.",
+        title: "Ready for Shabbat",
+        text: "A Shabbat hotplate in every one of our apartments, kosher kitchens available and sukkah terraces: you arrive, everything is already set.",
       },
       {
-        title: "Prime location",
-        text: "Handpicked addresses in Jerusalem's most sought-after neighborhoods, steps from the city's must-sees.",
+        title: "At the heart of the city",
+        text: "Addresses handpicked in the most sought-after neighborhoods — the Old City, synagogues and the best restaurants a few minutes' walk away.",
       },
       {
-        title: "Local insight",
-        text: "Our local team points you to the best tours, restaurants and experiences, off the beaten track.",
+        title: "Hotel comfort",
+        text: "Linens and towels provided, air conditioning, washer and dryer: the service of a hotel with the space and privacy of an apartment.",
       },
       {
-        title: "Comfort",
-        text: "Premium linens, fully equipped kitchen, air conditioning: every apartment is designed for an effortless stay.",
+        title: "Balconies & terraces",
+        text: "Balconies, large terraces and private gardens to enjoy the mildness of Jerusalem evenings, at home.",
+      },
+      {
+        title: "A team that speaks your language",
+        text: "Eric and his team answer in French, English and Hebrew — before you book and throughout your stay.",
       },
       {
         title: "Spotless cleaning",
-        text: "A rigorous cleaning protocol before every arrival, for a spotless apartment from floor to ceiling.",
+        text: "Professional cleaning before every arrival, checked apartment by apartment, without exception.",
       },
     ],
     ctaEyebrow: "Book now",
