@@ -52,8 +52,12 @@ export const propertySearchSchema = z
     sort: z
       .enum(["recent", "price_asc", "price_desc", "surface_desc", "surface_asc"])
       .default("recent"),
-  })
-  .strict();
+  });
+// Pas de .strict() ici : un paramètre d'URL imprévu (tracking, extension
+// navigateur, futur champ non encore branché) ne doit jamais faire échouer
+// toute la recherche — il doit juste être ignoré. `.strict()` provoquait
+// exactement ça silencieusement (repli total sur les valeurs par défaut,
+// aucun filtre appliqué) dès qu'un champ imprévu était présent.
 
 export type PropertySearch = z.infer<typeof propertySearchSchema>;
 

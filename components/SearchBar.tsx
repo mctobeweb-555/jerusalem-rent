@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDict, useLocale } from "@/lib/i18n/context";
 import { localizedHref } from "@/lib/i18n/config";
+import { NEIGHBORHOODS } from "@/lib/neighborhoods";
 
 export default function SearchBar({ variant = "card" }: { variant?: "card" | "band" }) {
   const router = useRouter();
   const dict = useDict();
   const locale = useLocale();
   const [q, setQ] = useState("");
-  const [city, setCity] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
   const [status, setStatus] = useState("FOR_SALE");
   const band = variant === "band";
 
@@ -18,7 +19,7 @@ export default function SearchBar({ variant = "card" }: { variant?: "card" | "ba
     e.preventDefault();
     const params = new URLSearchParams();
     if (q.trim()) params.set("q", q.trim());
-    if (city.trim()) params.set("city", city.trim());
+    if (neighborhood) params.set("neighborhood", neighborhood);
     if (status) params.set("status", status);
     router.push(`${localizedHref(locale, "/annonces")}?${params.toString()}`);
   }
@@ -66,13 +67,19 @@ export default function SearchBar({ variant = "card" }: { variant?: "card" | "ba
           <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-stone-400">
             {dict.search.cityAria}
           </span>
-          <input
+          <select
             className="border-0 bg-transparent p-0 text-sm text-stone-900 outline-none placeholder:text-stone-400 focus:ring-0"
-            placeholder={dict.search.cityPlaceholder}
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={neighborhood}
+            onChange={(e) => setNeighborhood(e.target.value)}
             aria-label={dict.search.cityAria}
-          />
+          >
+            <option value="">{dict.filters.allTypes}</option>
+            {NEIGHBORHOODS.map((n) => (
+              <option key={n.slug} value={n.name}>
+                {n.name}
+              </option>
+            ))}
+          </select>
         </div>
         <button
           type="submit"
@@ -119,13 +126,19 @@ export default function SearchBar({ variant = "card" }: { variant?: "card" | "ba
         onChange={(e) => setQ(e.target.value)}
         aria-label={dict.search.keywordAria}
       />
-      <input
+      <select
         className="input"
-        placeholder={dict.search.cityPlaceholder}
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
+        value={neighborhood}
+        onChange={(e) => setNeighborhood(e.target.value)}
         aria-label={dict.search.cityAria}
-      />
+      >
+        <option value="">{dict.filters.allTypes}</option>
+        {NEIGHBORHOODS.map((n) => (
+          <option key={n.slug} value={n.name}>
+            {n.name}
+          </option>
+        ))}
+      </select>
       <button type="submit" className="btn-primary whitespace-nowrap">
         {dict.search.searchBtn}
       </button>

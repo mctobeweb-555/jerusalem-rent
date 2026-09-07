@@ -5,6 +5,7 @@ import { useState } from "react";
 import GuestsPicker, { type Guests } from "@/components/GuestsPicker";
 import { useDict, useLocale } from "@/lib/i18n/context";
 import { localizedHref } from "@/lib/i18n/config";
+import { NEIGHBORHOODS } from "@/lib/neighborhoods";
 
 // Légende compacte au-dessus d'un champ (même structure pour tous les champs
 // afin qu'ils aient tous la même hauteur, quel que soit leur contenu).
@@ -40,7 +41,7 @@ export default function ShortTermSearchBar({ variant = "card" }: { variant?: "ca
   const router = useRouter();
   const dict = useDict();
   const locale = useLocale();
-  const [city, setCity] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState<Guests>({
@@ -55,14 +56,15 @@ export default function ShortTermSearchBar({ variant = "card" }: { variant?: "ca
     e.preventDefault();
     const params = new URLSearchParams();
     params.set("status", "SHORT_TERM");
-    if (city.trim()) params.set("city", city.trim());
+    if (neighborhood) params.set("neighborhood", neighborhood);
     if (checkIn) params.set("checkIn", checkIn);
     if (checkOut) params.set("checkOut", checkOut);
+    // Seul le total de voyageurs est un filtre reconnu par la recherche
+    // (`propertySearchSchema` est strict — un paramètre non défini comme
+    // adults/children/babies ferait échouer la validation de TOUTE la
+    // recherche, silencieusement, en retombant sur les valeurs par défaut).
     const total = guests.adults + guests.children;
     if (total > 0) params.set("guests", String(total));
-    params.set("adults", String(guests.adults));
-    params.set("children", String(guests.children));
-    params.set("babies", String(guests.babies));
     router.push(`${localizedHref(locale, "/annonces")}?${params.toString()}`);
   }
 
@@ -84,13 +86,19 @@ export default function ShortTermSearchBar({ variant = "card" }: { variant?: "ca
       }
     >
       <Field label={dict.search.destination} band={band}>
-        <input
+        <select
           className={inputClass}
-          placeholder={dict.search.cityPlaceholder}
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+          value={neighborhood}
+          onChange={(e) => setNeighborhood(e.target.value)}
           aria-label={dict.search.destination}
-        />
+        >
+          <option value="">{dict.filters.allTypes}</option>
+          {NEIGHBORHOODS.map((n) => (
+            <option key={n.slug} value={n.name}>
+              {n.name}
+            </option>
+          ))}
+        </select>
       </Field>
 
       <Field label={dict.search.checkIn} band={band}>
