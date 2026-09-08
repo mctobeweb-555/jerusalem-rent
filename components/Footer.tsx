@@ -158,12 +158,14 @@ export default function Footer({
           </Link>
         </nav>
 
-        {/* Nos quartiers, sous forme de boutons — tous les quartiers. */}
+        {/* Nos quartiers, sous forme de boutons — vers la page SEO dédiée de
+            chaque quartier (/quartiers/[slug]), pas vers le listing filtré :
+            ce dernier reste accessible depuis ces pages (CTA + recherche). */}
         <div className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-2">
           {NEIGHBORHOODS.map((n) => (
             <Link
               key={n.slug}
-              href={href(`/annonces?neighborhood=${encodeURIComponent(n.name)}`)}
+              href={href(`/quartiers/${n.slug}`)}
               className="border border-stone-300 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-stone-600 transition hover:border-primary-600 hover:text-primary-700"
             >
               {n.name}
