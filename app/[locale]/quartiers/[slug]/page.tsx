@@ -29,9 +29,9 @@ export async function generateStaticParams() {
 }
 
 // Visuels des arguments — un par entrée de dict.neighborhoodPage.usp, dans le
-// même ordre. Chabbat/terrasses/équipe/propreté : visuels fournis par le
-// client (scènes de vie, public/brand/usp/). Emplacement/confort hôtelier :
-// vraies photos des appartements importés, en attendant un visuel dédié.
+// même ordre. Tous fournis par le client (public/brand/usp/) : scènes de vie
+// (Chabbat, terrasse, équipe) et photos réelles de jerusalem-rent.com
+// (emplacement = Kikar Hamusica à Nahalat Shiva, confort = salon MBH).
 const USP_IMAGES = [
   "/brand/usp/chabbat.jpg",
   "/brand/usp/emplacement.jpg",
@@ -41,10 +41,10 @@ const USP_IMAGES = [
   "/brand/usp/proprete.jpg",
 ];
 
-// Bannière finale : visuel "de vie" fourni par le client (famille pour
-// Chabbat) — répond à la demande initiale d'une photo avec des personnes
-// dans un appartement plutôt qu'un intérieur vide.
-const CTA_BANNER_IMAGE = "/brand/usp/chabbat.jpg";
+// Bannière finale : visuel "de vie" fourni par le client (famille à
+// l'arrivée, valises à la main) — répond à la demande initiale d'une photo
+// avec des personnes plutôt qu'un intérieur vide.
+const CTA_BANNER_IMAGE = "/brand/arrivee-famille.jpg";
 
 async function getNeighborhoodData(name: string, locale: Locale) {
   const [properties, total] = await Promise.all([
