@@ -258,7 +258,7 @@ export default async function NeighborhoodPage({
 
       {/* Réservation directe par WhatsApp — même bandeau que la home. */}
       {whatsapp && (
-        <section className="py-12">
+        <section className="py-6">
           <div className="container-page">
             <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-4 bg-primary-600 px-6 py-6 sm:flex-row sm:gap-8 sm:px-10">
               <p className="text-center text-sm text-white/90 sm:text-start">
