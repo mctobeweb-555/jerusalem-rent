@@ -6,8 +6,20 @@ import SiteSettingsForm from "@/components/admin/SiteSettingsForm";
 import WhatsAppSettingsForm from "@/components/admin/WhatsAppSettingsForm";
 import ReviewsSettingsForm from "@/components/admin/ReviewsSettingsForm";
 import SocialSettingsForm from "@/components/admin/SocialSettingsForm";
+import PopupSettingsForm from "@/components/admin/PopupSettingsForm";
 
 export const dynamic = "force-dynamic";
+
+/** Bloc de traduction de la popup tel que stocké en base (champ Json). */
+function popupTranslation(raw: unknown, locale: "en" | "he") {
+  const empty = { title: "", text: "", ctaLabel: "" };
+  if (!raw || typeof raw !== "object") return empty;
+  const block = (raw as Record<string, unknown>)[locale];
+  if (!block || typeof block !== "object") return empty;
+  const b = block as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" ? v : "");
+  return { title: str(b.title), text: str(b.text), ctaLabel: str(b.ctaLabel) };
+}
 
 export default async function AdminSettingsPage() {
   const user = await getSessionUser();
@@ -25,6 +37,13 @@ export default async function AdminSettingsPage() {
         facebookUrl: true,
         instagramUrl: true,
         linkedinUrl: true,
+        popupEnabled: true,
+        popupImageUrl: true,
+        popupTitle: true,
+        popupText: true,
+        popupCtaLabel: true,
+        popupCtaUrl: true,
+        popupTranslations: true,
       },
     }),
   ]);
@@ -58,6 +77,20 @@ export default async function AdminSettingsPage() {
           facebookUrl: contact?.facebookUrl ?? "",
           instagramUrl: contact?.instagramUrl ?? "",
           linkedinUrl: contact?.linkedinUrl ?? "",
+        }}
+      />
+      <PopupSettingsForm
+        initial={{
+          popupEnabled: contact?.popupEnabled ?? false,
+          popupImageUrl: contact?.popupImageUrl ?? "",
+          popupTitle: contact?.popupTitle ?? "",
+          popupText: contact?.popupText ?? "",
+          popupCtaLabel: contact?.popupCtaLabel ?? "",
+          popupCtaUrl: contact?.popupCtaUrl ?? "",
+          translations: {
+            en: popupTranslation(contact?.popupTranslations, "en"),
+            he: popupTranslation(contact?.popupTranslations, "he"),
+          },
         }}
       />
     </div>

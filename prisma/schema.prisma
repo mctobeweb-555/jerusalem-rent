@@ -193,6 +193,20 @@ model SiteSettings {
   facebookUrl  String?
   instagramUrl String?
   linkedinUrl  String?
+  // Popup d'accueil (occasions spéciales) : s'ouvre 3 s après l'arrivée sur
+  // le site public, une seule fois par session de navigation.
+  popupEnabled  Boolean @default(false)
+  popupImageUrl String?
+  popupTitle    String?
+  popupText     String?
+  popupCtaLabel String?
+  // Chemin interne ("/annonces", préfixé par la langue à l'affichage) ou URL
+  // absolue. Vide = popup purement informative, sans bouton.
+  popupCtaUrl   String?
+  // Traductions EN/HE optionnelles : { en: {title,text,ctaLabel}, he: {…} }.
+  // Champ absent ou vide → repli sur le français ci-dessus, même logique que
+  // PropertyTranslation.
+  popupTranslations Json?
   updatedAt       DateTime @updatedAt @default(now())
 }
 

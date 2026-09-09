@@ -87,6 +87,7 @@ export const he: Dictionary = {
     noResultsTitle: "אין תוצאות",
     noResultsDesc: "לא נמצא נכס התואם לקריטריונים אלה. נסו להרחיב את החיפוש.",
     resetFilters: "איפוס המסננים",
+    close: "סגירה",
   },
   home: {
     heroBadge: "נכסי יוקרה בירושלים",

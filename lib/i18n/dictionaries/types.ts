@@ -46,6 +46,7 @@ export type Dictionary = {
     noResultsTitle: string;
     noResultsDesc: string;
     resetFilters: string;
+    close: string;
   };
   home: {
     heroBadge: string;

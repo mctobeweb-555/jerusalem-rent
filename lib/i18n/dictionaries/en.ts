@@ -91,6 +91,7 @@ export const en: Dictionary = {
     noResultsTitle: "No results",
     noResultsDesc: "No listing matches these criteria. Try broadening your search.",
     resetFilters: "Reset filters",
+    close: "Close",
   },
   home: {
     heroBadge: "Prestige residences in Jerusalem",

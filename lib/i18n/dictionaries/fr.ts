@@ -94,6 +94,7 @@ export const fr: Dictionary = {
     noResultsDesc:
       "Aucune annonce ne correspond à ces critères. Essayez d'élargir votre recherche.",
     resetFilters: "Réinitialiser les filtres",
+    close: "Fermer",
   },
   home: {
     heroBadge: "Résidences de prestige à Jérusalem",

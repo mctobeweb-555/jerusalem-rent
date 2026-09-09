@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { prisma } from "@/lib/db";
+import type { Locale } from "@/lib/i18n/config";
 
 export type SiteMode = {
   showSale: boolean;
@@ -87,4 +88,53 @@ export async function getSocialLinks(): Promise<SocialLinks> {
 export async function getReviewsGeneralized(): Promise<boolean> {
   const row = await getSiteSettingsRow();
   return row?.reviewsGeneralized ?? DEFAULTS.reviewsGeneralized;
+}
+
+export type WelcomePopup = {
+  imageUrl: string | null;
+  title: string;
+  text: string | null;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+};
+
+/** Un bloc de traduction de la popup tel que stocké dans `popupTranslations`. */
+type PopupTranslation = { title?: string; text?: string; ctaLabel?: string };
+
+// Le champ Json arrive non typé de Prisma : on ne lit que les 3 clés attendues
+// et on ignore le reste (une saisie corrompue ne doit pas casser la page).
+function readPopupTranslation(raw: unknown, locale: Locale): PopupTranslation {
+  if (locale === "fr" || !raw || typeof raw !== "object") return {};
+  const block = (raw as Record<string, unknown>)[locale];
+  if (!block || typeof block !== "object") return {};
+  const b = block as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
+  return { title: str(b.title), text: str(b.text), ctaLabel: str(b.ctaLabel) };
+}
+
+/**
+ * Popup d'accueil pour la langue demandée, ou null si elle ne doit pas
+ * s'afficher (désactivée, ou aucun titre saisi). EN/HE retombent sur le
+ * français quand la traduction est absente — même règle que les annonces.
+ */
+export async function getWelcomePopup(locale: Locale): Promise<WelcomePopup | null> {
+  const row = await getSiteSettingsRow();
+  if (!row?.popupEnabled) return null;
+
+  const t = readPopupTranslation(row.popupTranslations, locale);
+  const title = t.title ?? row.popupTitle?.trim();
+  // Sans titre, la popup n'aurait rien à annoncer : on ne l'affiche pas.
+  if (!title) return null;
+
+  const ctaLabel = t.ctaLabel ?? row.popupCtaLabel?.trim() ?? null;
+  const ctaUrl = row.popupCtaUrl?.trim() || null;
+  return {
+    imageUrl: row.popupImageUrl?.trim() || null,
+    title,
+    text: t.text ?? row.popupText?.trim() ?? null,
+    // Un bouton sans destination (ou une destination sans libellé) n'a pas de
+    // sens : les deux doivent être renseignés pour que le CTA apparaisse.
+    ctaLabel: ctaLabel && ctaUrl ? ctaLabel : null,
+    ctaUrl: ctaLabel && ctaUrl ? ctaUrl : null,
+  };
 }
