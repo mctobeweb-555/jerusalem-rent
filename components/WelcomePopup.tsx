@@ -95,7 +95,7 @@ export default function WelcomePopup({ popup }: { popup: WelcomePopupData }) {
       />
 
       <div
-        className={`relative w-full max-w-md overflow-hidden bg-white shadow-lift transition-all duration-200 motion-reduce:transition-none ${
+        className={`relative w-full max-w-[44rem] overflow-hidden bg-white shadow-lift transition-all duration-200 motion-reduce:transition-none ${
           shown ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
         }`}
       >
@@ -109,20 +109,39 @@ export default function WelcomePopup({ popup }: { popup: WelcomePopupData }) {
           <CloseIcon className="h-4 w-4" />
         </button>
 
-        <div className="max-h-[85vh] overflow-y-auto">
+        {/* Image à côté du texte dès `sm` : la hauteur de la popup devient
+            celle de la colonne de texte au lieu de la somme image + texte,
+            ce qui évite le défilement interne. Empilé sur mobile, avec une
+            image plus basse (16/9) pour la même raison. `max-h`/`overflow`
+            restent un filet de sécurité pour un texte très long ou un écran
+            très bas (paysage sur mobile). */}
+        <div
+          className={`max-h-[90vh] overflow-y-auto sm:flex sm:items-stretch ${
+            // La hauteur plancher ne sert qu'à donner de l'allure à la colonne
+            // image quand le texte est court ; sans image elle laisserait juste
+            // un grand vide.
+            popup.imageUrl ? "sm:min-h-[19rem]" : ""
+          }`}
+        >
           {popup.imageUrl && (
-            <div className="relative aspect-[4/3] w-full bg-stone-100">
+            <div className="relative aspect-[16/9] w-full shrink-0 bg-stone-100 sm:aspect-auto sm:w-5/12">
               <Image
                 src={popup.imageUrl}
                 alt=""
                 fill
-                sizes="(min-width: 640px) 28rem, 100vw"
+                sizes="(min-width: 640px) 20rem, 100vw"
                 className="object-cover"
               />
             </div>
           )}
 
-          <div className="px-6 py-7 text-center sm:px-8">
+          <div
+            className={`flex flex-col justify-center px-6 py-7 text-center sm:flex-1 sm:px-9 ${
+              // Aligné au début seulement en vis-à-vis de l'image ; centré sur
+              // toute la largeur quand la popup est en texte seul.
+              popup.imageUrl ? "sm:text-start" : ""
+            }`}
+          >
             <h2
               id="welcome-popup-title"
               className="font-display text-2xl font-light leading-snug text-stone-900 sm:text-3xl"
