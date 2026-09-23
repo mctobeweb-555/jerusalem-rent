@@ -41,8 +41,8 @@ function localeMiddleware(req: NextRequest): NextResponse {
   return NextResponse.redirect(url);
 }
 
-// Routes non localisées : admin (auth NextAuth), api, login, désabonnement,
-// et fichiers statiques.
+// Routes non localisées : admin (auth NextAuth), api, login, mot de passe
+// oublié/réinitialisation, désabonnement, et fichiers statiques.
 export default async function middleware(req: NextRequest, ctx: unknown) {
   const { pathname } = req.nextUrl;
 
@@ -55,6 +55,8 @@ export default async function middleware(req: NextRequest, ctx: unknown) {
   if (
     pathname.startsWith("/api") ||
     pathname.startsWith("/login") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password") ||
     pathname.startsWith("/desabonnement") ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||

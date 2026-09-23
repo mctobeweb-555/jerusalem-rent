@@ -38,6 +38,7 @@ model User {
   agency       Agency     @relation(fields: [agencyId], references: [id])
   properties   Property[]
   todos        Todo[]
+  resetTokens  PasswordResetToken[]
   createdAt    DateTime   @default(now())
 }
 
@@ -225,6 +226,22 @@ model Todo {
   createdAt DateTime @default(now())
 
   @@index([agencyId, createdAt])
+}
+
+// Lien de réinitialisation de mot de passe (admin/agent). Le champ `token`
+// stocke un HASH SHA-256 du token envoyé par email, jamais le token en clair
+// — une fuite de la base ne permet donc pas de réinitialiser un compte.
+// `usedAt` non nul = lien déjà consommé, ne peut plus resservir.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model NewsletterSubscriber {
