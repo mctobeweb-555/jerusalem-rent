@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/admin", label: "Tableau de bord", exact: true, adminOnly: false },
+  { href: "/admin/todos", label: "Todo", adminOnly: false },
   { href: "/admin/stats", label: "Statistiques", adminOnly: false },
   { href: "/admin/properties", label: "Annonces", adminOnly: false },
   { href: "/admin/leads", label: "Leads", adminOnly: false },

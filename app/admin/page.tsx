@@ -6,6 +6,8 @@ import {
   canManageAllProperties,
 } from "@/lib/guards";
 import { LEAD_STATUS_LABELS } from "@/lib/utils";
+import { listTodos } from "@/lib/todos";
+import TodoBoard from "@/components/admin/TodoBoard";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +31,7 @@ export default async function AdminDashboard() {
     leadsMonth,
     visitorsMonth,
     recentLeads,
+    recentTodos,
   ] = await Promise.all([
     prisma.property.count({
       where: { ...scope, published: true, status: { in: ["FOR_SALE", "SOLD"] } },
@@ -51,6 +54,7 @@ export default async function AdminDashboard() {
       take: 5,
       include: { property: { select: { title: true, slug: true } } },
     }),
+    listTodos(user.agencyId!, 5),
   ]);
 
   const publishedTotal = publishedSale + publishedRent + publishedShort;
@@ -119,6 +123,16 @@ export default async function AdminDashboard() {
             ))}
           </ul>
         )}
+      </div>
+
+      <div className="mt-8">
+        <TodoBoard
+          initialTodos={recentTodos.map((t) => ({
+            ...t,
+            createdAt: t.createdAt.toISOString(),
+          }))}
+          viewAllHref="/admin/todos"
+        />
       </div>
     </div>
   );

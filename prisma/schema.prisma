@@ -15,6 +15,7 @@ model Agency {
   name       String
   users      User[]
   properties Property[]
+  todos      Todo[]
   createdAt  DateTime   @default(now())
 }
 
@@ -36,6 +37,7 @@ model User {
   agencyId     String
   agency       Agency     @relation(fields: [agencyId], references: [id])
   properties   Property[]
+  todos        Todo[]
   createdAt    DateTime   @default(now())
 }
 
@@ -208,6 +210,21 @@ model SiteSettings {
   // PropertyTranslation.
   popupTranslations Json?
   updatedAt       DateTime @updatedAt @default(now())
+}
+
+// Pense-bête interne partagé par toute l'agence (admin + agents) : une note
+// courte, l'auteur et la date. Se supprime simplement une fois la tâche
+// faite — pas de statut "fait", la ligne disparaît.
+model Todo {
+  id        String   @id @default(cuid())
+  text      String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  agencyId  String
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([agencyId, createdAt])
 }
 
 model NewsletterSubscriber {
